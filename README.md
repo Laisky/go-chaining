@@ -30,8 +30,6 @@ import (
 	"github.com/Laisky/go-chaining"
 )
 
-var c = &chaining.Chain{}
-
 func rootChainFunc() (int, error) {
 	return 0, nil
 }
@@ -50,7 +48,7 @@ func handleError(err error) {
 }
 
 func main() {
-	r := c.New(rootChainFunc()).  // create chaining
+	r := chaining.New(rootChainFunc()).  // create chaining
 		Next(plus1). // +1
 		Next(plus1). // +1
 		Next(throwError). // will interupt chain
