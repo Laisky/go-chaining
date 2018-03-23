@@ -1,6 +1,22 @@
 # go-chaining
 
-Simply chaining functions in Go
+Simply functions chaining in Go
+
+
+## Methods
+
+`.New(val interface{}, err error) *Chain`
+
+create the chaining by called a func that returns a value and an error.
+
+`.Next(f func(c *Chain) (interface{}, error)) *Chain`
+
+pass chaning to next func
+
+`.Fail(f func(err error)) *Chain`
+
+if any error has occured in the upstream, all the downstrem will be ignored until thers is a `Fail` handle the error.
+
 
 ## Example
 
@@ -34,17 +50,35 @@ func handleError(err error) {
 }
 
 func main() {
-	r := c.New(rootChainFunc()).
-		Next(plus1).
-		Next(plus1).
+	r := c.New(rootChainFunc()).  // create chaining
+		Next(plus1). // +1
+		Next(plus1). // +1
 		Next(throwError). // will interupt chain
 		Next(plus1).
-		Fail(handleError). // will recover chain
 		Next(plus1).
-		Next(plus1)
+		Fail(handleError). // will recover chain
+		Next(plus1). // +1
+		Next(plus1) // +1
 
 	fmt.Printf("got result: %v\n", r.GetInt())
 	// got 4
 }
 
+```
+
+There are many convenient methods to get the value from chaining:
+
+```
+.GetError() error
+.GetVal() interface
+.GetInt() int
+.GetInt32() int32
+.GetInt64() int64
+.GetFloat32() float32
+.GetFloat64() float64
+.GetBool() bool
+.GetSliceString() []string
+.GetSliceInterface() []interface{}
+.GetMapStringString() map[string]string
+.GetMapStringInterface() map[string]interface{}
 ```
