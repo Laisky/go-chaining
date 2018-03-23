@@ -1,23 +1,25 @@
-package chaining
+package chaining_test
 
 import (
 	"errors"
 	"fmt"
 	"testing"
+
+	"github.com/Laisky/go-chaining"
 )
 
-var c = &Chain{}
+var c = &chaining.Chain{}
 
 func rootChainFunc() (int, error) {
 	return 0, nil
 }
 
-func plus1(c *Chain) (interface{}, error) {
+func plus1(c *chaining.Chain) (interface{}, error) {
 	v := c.GetInt()
 	return v + 1, nil
 }
 
-func throwError(c *Chain) (r interface{}, err error) {
+func throwError(c *chaining.Chain) (r interface{}, err error) {
 	return c.GetInt(), errors.New("error")
 }
 
