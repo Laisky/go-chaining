@@ -29,7 +29,7 @@ func throwError(c *chaining.Chain) (r interface{}, err error) {
 	return c.GetInt(), errors.New("some error happened")
 }
 
-func fail(err error) {
+func handleError(err error) {
 	fmt.Printf("deal with error: %v\n", err)
 }
 
@@ -39,12 +39,12 @@ func main() {
 		Next(plus1).
 		Next(throwError). // will interupt chain
 		Next(plus1).
-		Fail(fail). // will recover chain
+		Fail(handleError). // will recover chain
 		Next(plus1).
 		Next(plus1)
 
 	fmt.Printf("got result: %v\n", r.GetInt())
-	// r = 4
+	// got 4
 }
 
 ```

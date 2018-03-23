@@ -14,18 +14,6 @@ func (c *Chain) New(val interface{}, err error) *Chain {
 	}
 }
 
-func (c *Chain) GetVal() interface{} {
-	return c.val
-}
-
-func (c *Chain) GetInt() int {
-	return c.val.(int)
-}
-
-func (c *Chain) GetError() error {
-	return c.err
-}
-
 // Next pass the result of the upstream to the next func
 // if any error occured at any point of the upstream,
 // no downstream will be involved, until there is a `Fail` deal with the error
