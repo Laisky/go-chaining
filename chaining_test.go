@@ -14,12 +14,11 @@ func rootChainFunc() (int, error) {
 }
 
 func plus1(c *chaining.Chain) (interface{}, error) {
-	v := c.GetInt()
-	return v + 1, nil
+	return c.GetInt() + 1, nil
 }
 
-func throwError(c *chaining.Chain) (r interface{}, err error) {
-	return c.GetInt(), errors.New("error")
+func throwError(c *chaining.Chain) (interface{}, error) {
+	return nil, errors.New("error occured in the upstream")
 }
 
 func fail(err error) {

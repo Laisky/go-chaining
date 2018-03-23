@@ -35,12 +35,11 @@ func rootChainFunc() (int, error) {
 }
 
 func plus1(c *chaining.Chain) (interface{}, error) {
-	v := c.GetInt()
-	return v + 1, nil
+	return c.GetInt(), nil
 }
 
-func throwError(c *chaining.Chain) (r interface{}, err error) {
-	return c.GetInt(), errors.New("some error happened")
+func throwError(c *chaining.Chain) (interface{}, error) {
+	return nil, errors.New("some error happened")
 }
 
 func handleError(err error) {
@@ -61,7 +60,6 @@ func main() {
 	fmt.Printf("got result: %v\n", r.GetInt())
 	// got 4
 }
-
 ```
 
 There are many convenient methods to get the value from chaining:
@@ -69,6 +67,7 @@ There are many convenient methods to get the value from chaining:
 ```
 .GetError() error
 .GetVal() interface
+.GetString() string
 .GetInt() int
 .GetInt32() int32
 .GetInt64() int64
