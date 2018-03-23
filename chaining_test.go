@@ -3,12 +3,11 @@ package chaining_test
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/Laisky/go-chaining"
 )
-
-var c = &chaining.Chain{}
 
 func rootChainFunc() (int, error) {
 	return 0, nil
@@ -28,7 +27,7 @@ func fail(err error) {
 }
 
 func TestSimpleChain(t *testing.T) {
-	r := c.New(rootChainFunc()).
+	r := chaining.New(rootChainFunc()).
 		Next(plus1).
 		Fail(fail).
 		Next(plus1).
@@ -39,7 +38,7 @@ func TestSimpleChain(t *testing.T) {
 	}
 }
 func TestChainWithError(t *testing.T) {
-	r := c.New(rootChainFunc()).
+	r := chaining.New(rootChainFunc()).
 		Next(plus1).
 		Next(plus1).
 		Next(throwError). // will interupt chain
@@ -51,7 +50,7 @@ func TestChainWithError(t *testing.T) {
 	}
 }
 func TestChainWithErrorAndFail(t *testing.T) {
-	r := c.New(rootChainFunc()).
+	r := chaining.New(rootChainFunc()).
 		Next(plus1).
 		Next(plus1).
 		Next(throwError). // will interupt chain
@@ -62,5 +61,27 @@ func TestChainWithErrorAndFail(t *testing.T) {
 	expectVal := 4
 	if r.GetInt() != expectVal {
 		t.Errorf("expect %v, got %v", expectVal, r.GetInt())
+	}
+}
+
+func toLower(c *chaining.Chain) (interface{}, error) {
+	v := c.GetString()
+	return strings.ToLower(v), nil
+}
+
+func toUpper(c *chaining.Chain) (interface{}, error) {
+	v := c.GetString()
+	return strings.ToUpper(v), nil
+}
+
+func TestChainWithString(t *testing.T) {
+	f := func() (string, error) { return "aBcD", nil }
+	r := chaining.New(f()).
+		Next(toLower).
+		Next(toUpper)
+
+	expectVal := "ABCD"
+	if r.GetString() != expectVal {
+		t.Errorf("expect %v, got %v", expectVal, r.GetString())
 	}
 }

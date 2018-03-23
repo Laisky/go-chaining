@@ -10,6 +10,11 @@ func (c *Chain) GetVal() interface{} {
 	return c.val
 }
 
+// GetString get the value in string
+func (c *Chain) GetString() string {
+	return c.val.(string)
+}
+
 // GetInt get the value in int
 func (c *Chain) GetInt() int {
 	return c.val.(int)

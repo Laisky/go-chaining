@@ -6,8 +6,8 @@ type Chain struct {
 }
 
 // New is the root of the channing
-// .New(func(args...))
-func (c *Chain) New(val interface{}, err error) *Chain {
+// New(func(args...))
+func New(val interface{}, err error) *Chain {
 	return &Chain{
 		val: val,
 		err: err,
