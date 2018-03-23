@@ -3,14 +3,14 @@ package chaining
 type Chain struct {
 	val interface{}
 	err error
-	p   *Chain
 }
 
+// New is the root of the channing
+// .New(func(args...))
 func (c *Chain) New(val interface{}, err error) *Chain {
 	return &Chain{
 		val: val,
 		err: err,
-		p:   c,
 	}
 }
 
@@ -26,18 +26,30 @@ func (c *Chain) GetError() error {
 	return c.err
 }
 
-func (c *Chain) Next(f func(val interface{}) (interface{}, error)) *Chain {
+// Next pass the result of the upstream to the next func
+// if any error occured at any point of the upstream,
+// no downstream will be involved, until there is a `Fail` deal with the error
+func (c *Chain) Next(f func(c *Chain) (interface{}, error)) *Chain {
 	if c.err != nil {
 		return c
 	}
 
-	return c.New(f(c.val))
+	if val, err := f(c); err != nil {
+		c.err = err
+	} else {
+		c.val = val
+	}
+
+	return c
 }
 
+// Fail deal with the first error that occured at the upstream of the chain
 func (c *Chain) Fail(f func(err error)) *Chain {
 	if c.err == nil {
 		return c
 	}
 
+	f(c.err)
+	c.err = nil
 	return c
 }
