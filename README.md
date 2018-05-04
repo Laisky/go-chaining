@@ -74,7 +74,7 @@ func Flow(fs FlowFuncs) func(interface{}, error) (c *Chain)
 ```
 
 ```go
-c = chaining.Flow(chaining.FlowFuncs{
+c := chaining.Flow(chaining.FlowFuncs{
 	plus1, // +1
 	throwError,  // error will pass to the downstream funcs
 	plus1, // +1
@@ -88,13 +88,26 @@ c.GetError()  // got Error("error occured in the upstream")
 
 ## API References
 
-There are many convenient methods to get the value from chaining:
-
-`chaining.Chain`
+### `chaining`
 
 ```go
+type Chain struct
+New(val interface{}, err error) *Chain
+```
+
+
+### `chaining.Chain`
+
+There are many convenient methods to get the value from chaining:
+
+```go
+
+.Next(f func(c *Chain) (interface{}, error)) *Chain
+.NextWithFail(f func(c *Chain) (interface{}, error)) *Chain
+.Fail(f func(err error)) *Chain
+
 .GetError() error
-.GetVal() interface
+.GetVal() interface{}
 .GetString() string
 .GetInt() int
 .GetInt32() int32
