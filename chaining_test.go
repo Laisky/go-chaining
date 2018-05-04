@@ -64,6 +64,9 @@ func TestChainWithErrorAndFail(t *testing.T) {
 	if r.GetInt() != expectVal {
 		t.Errorf("expect %v, got %v", expectVal, r.GetInt())
 	}
+	if r.GetError() != nil {
+		t.Error("`NextWithFail(plus1)` not vanish error")
+	}
 }
 
 func toLower(c *chaining.Chain) (interface{}, error) {

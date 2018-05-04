@@ -11,7 +11,11 @@ create the chaining by called a func that returns a value and an error.
 
 `.Next(f func(c *Chain) (interface{}, error)) *Chain`
 
-pass chaning to next func
+pass chaning to next func, will ignore funcs if there is any error occured on the upstream
+
+`.NextWithFail(f func(c *Chain) (interface{}, error)) *Chain`
+
+pass chaning to next func no matter whether there got an error
 
 `.Fail(f func(err error)) *Chain`
 
@@ -58,10 +62,11 @@ func main() {
 		Next(plus1). // +1
 		Next(throwError).  // interupt again
 		Next(plus1).
-		NextWithFail(plus1)  // +1, deal error by myself
+		NextWithFail(plus1).  // +1, deal error by yourself
+		Next(throwError)  // throw error
 
-	fmt.Printf("got result: %v\n", r.GetInt())
-	// got 4
+	r.GetInt() // got 4
+	r.GetError()  // got Error("some error happened")
 }
 ```
 
@@ -77,12 +82,12 @@ func Flow(fs FlowFuncs) func(interface{}, error) (c *Chain)
 c := chaining.Flow(chaining.FlowFuncs{
 	plus1, // +1
 	throwError,  // error will pass to the downstream funcs
-	plus1, // +1
+	plus1, // +1, and vanish the error (you should return error manually in the func)
 	plus1, // +1
 })(0, nil)
 
 c.GetInt()  // got 4
-c.GetError()  // got Error("error occured in the upstream")
+c.GetError()  // got nil
 ```
 
 
