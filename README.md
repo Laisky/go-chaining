@@ -11,7 +11,11 @@ create the chaining by called a func that returns a value and an error.
 
 `.Next(f func(c *Chain) (interface{}, error)) *Chain`
 
-pass chaning to next func
+pass chaning to next func, will ignore funcs if there is any error occured on the upstream
+
+`.NextWithFail(f func(c *Chain) (interface{}, error)) *Chain`
+
+pass chaning to next func no matter whether there got an error
 
 `.Fail(f func(err error)) *Chain`
 
