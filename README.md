@@ -47,7 +47,8 @@ func handleError(err error) {
 }
 
 func main() {
-	r := chaining.New(rootChainFunc()).  // create chaining
+	// r := chaining.New(0, nil).  // create chaining manually
+	r := chaining.New(rootChainFunc()).  // create chaining by func
 		Next(plus1). // +1
 		Next(plus1). // +1
 		Next(throwError). // will interupt chain
@@ -55,16 +56,43 @@ func main() {
 		Next(plus1).
 		Fail(handleError). // will recover chain
 		Next(plus1). // +1
-		Next(plus1) // +1
+		Next(throwError).  // interupt again
+		Next(plus1).
+		NextWithFail(plus1)  // +1, deal error by myself
 
 	fmt.Printf("got result: %v\n", r.GetInt())
 	// got 4
 }
 ```
 
+Or you can use `Flow`:
+
+```go
+// Flow chaining your funcs.
+// but you should deal with your error by yourself in funcs
+func Flow(fs FlowFuncs) func(interface{}, error) (c *Chain)
+```
+
+```go
+c = chaining.Flow(chaining.FlowFuncs{
+	plus1, // +1
+	throwError,  // error will pass to the downstream funcs
+	plus1, // +1
+	plus1, // +1
+})(0, nil)
+
+c.GetInt()  // got 4
+c.GetError()  // got Error("error occured in the upstream")
+```
+
+
+## API References
+
 There are many convenient methods to get the value from chaining:
 
-```
+`chaining.Chain`
+
+```go
 .GetError() error
 .GetVal() interface
 .GetString() string
