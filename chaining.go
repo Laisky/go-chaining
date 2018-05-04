@@ -31,16 +31,16 @@ func (c *Chain) Next(f func(c *Chain) (interface{}, error)) *Chain {
 	return c
 }
 
-// Similiar to Next,
+// NextWithFail is Similiar to Next,
 // the different is NextWithFail will ignore the error that happended in the upstream.
 // You should deal with the fail by yourself
 func (c *Chain) NextWithFail(f func(c *Chain) (interface{}, error)) *Chain {
-	if val, err := f(c); err != nil {
-		c.err = err
-	} else {
+	val, err := f(c)
+	if err == nil {
 		c.val = val
 	}
 
+	c.err = err
 	return c
 }
 
