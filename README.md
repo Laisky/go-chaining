@@ -92,7 +92,10 @@ c.GetError()  // got Error("error occured in the upstream")
 
 ```go
 type Chain struct
+type FlowFuncs struct
+
 New(val interface{}, err error) *Chain
+Flow(fs FlowFuncs) func(interface{}, error) *Chain
 ```
 
 
