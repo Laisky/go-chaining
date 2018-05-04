@@ -21,14 +21,14 @@ func throwError(c *chaining.Chain) (interface{}, error) {
 	return nil, errors.New("error occured in the upstream")
 }
 
-func fail(err error) {
-	fmt.Println("got error %v", err)
+func handleError(err error) {
+	fmt.Printf("got error %+v\n", err)
 }
 
 func TestSimpleChain(t *testing.T) {
 	r := chaining.New(rootChainFunc()).
 		Next(plus1).
-		Fail(fail).
+		Fail(handleError).
 		Next(plus1).
 		Next(plus1)
 	expectVal := 3
@@ -50,13 +50,16 @@ func TestChainWithError(t *testing.T) {
 }
 func TestChainWithErrorAndFail(t *testing.T) {
 	r := chaining.New(rootChainFunc()).
-		Next(plus1).
-		Next(plus1).
+		Next(plus1).      //+1
+		Next(plus1).      // +1
 		Next(throwError). // will interupt chain
 		Next(plus1).
-		Fail(fail). // will recover chain
+		Fail(handleError). // will recover chain
+		Next(plus1).       // +1
+		Next(throwError).
 		Next(plus1).
-		Next(plus1)
+		Next(plus1).
+		NextWithFail(plus1) // +1
 	expectVal := 4
 	if r.GetInt() != expectVal {
 		t.Errorf("expect %v, got %v", expectVal, r.GetInt())
