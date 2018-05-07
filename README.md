@@ -75,16 +75,16 @@ Or you can use `Flow`:
 ```go
 // Flow chaining your funcs.
 // but you should deal with your error by yourself in funcs
-func Flow(fs FlowFuncs) func(interface{}, error) (c *Chain)
+Flow(fs ...func(*Chain) (interface{}, error)) func(interface{}, error) (c *Chain)
 ```
 
 ```go
-c := chaining.Flow(chaining.FlowFuncs{
+c := chaining.Flow(
 	plus1, // +1
 	throwError,  // error will pass to the downstream funcs
 	plus1, // +1, and vanish the error (you should return error manually in the func)
 	plus1, // +1
-})(0, nil)
+)(0, nil)
 
 c.GetInt()  // got 4
 c.GetError()  // got nil
@@ -97,10 +97,9 @@ c.GetError()  // got nil
 
 ```go
 type Chain struct
-type FlowFuncs struct
 
 New(val interface{}, err error) *Chain
-Flow(fs FlowFuncs) func(interface{}, error) *Chain
+Flow(fs ...func(*Chain) (interface{}, error)) func(interface{}, error) (c *Chain)
 ```
 
 
