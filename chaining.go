@@ -1,8 +1,14 @@
 package chaining
 
+import "sync"
+
 type Chain struct {
-	val interface{}
-	err error
+	val    interface{}
+	err    error
+	isDone bool
+	then   func(*Chain)
+	catch  func(*Chain)
+	lock   *sync.Mutex
 }
 
 // New is the root of the channing
